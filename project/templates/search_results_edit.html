@@ -1,0 +1,34 @@
+<!-- In this page I used some chatgpt help -->
+{% extends "layout.html" %}
+
+{% block title %}
+    Search Results - Edit
+{% endblock %}
+
+{% block main %}
+<div class="container my-5">
+    <h2>Click recipe to edit:</h2>
+    {% if recipes %}
+        <div class="row row-cols-1 row-cols-md-4 g-4">
+            {% for recipe in recipes %}
+            <div class="col">
+                <a href="{{ url_for('edit', recipe_id=recipe[0]) }}" class="text-decoration-none">
+                    <div class="card h-100">
+                        {% if recipe[3] %}
+                        <img src="{{ url_for('static', filename='images/' + recipe[3]) }}" class="card-img-top" alt="{{ recipe[1] }}">
+                        {% else %}
+                        <img src="https://via.placeholder.com/150" class="card-img-top" alt="No Image Available">
+                        {% endif %}
+                        <div class="card-body">
+                            <h5 class="card-title">{{ recipe[1] }}</h5> 
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>No recipes found matching your query.</p>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,36 @@
+<!-- In this page I used some chatgpt help -->
+{% extends "layout.html" %}
+
+{% block title %}
+    {{ recipe['title'] }}
+{% endblock %}
+
+{% block main %}
+<div class="container my-5">
+    <div class="card">
+        <div class="card-body">
+            <h2>{{ recipe['title'] }}</h2>
+            <p>{{ recipe['description'] }}</p>
+            <p><strong>Contributer: </strong>{{+contributer_name }}</p>
+
+            <h4 class="text-left">Ingredients</h4>
+            <ul class="text-left">
+                {% for ingredient in ingredients %}
+                <li>{{ ingredient['amount'] }} {{ ingredient['measurement'] }} {{ ingredient['name'] }}</li>
+                {% endfor %}
+            </ul>
+
+            <h4 class="text-left">Directions</h4>
+            <ol class="text-left">
+                {% for direction in directions %}
+                <li>{{ direction['direction'] }}</li>
+                {% endfor %}
+            </ol>
+
+            {% if images %}
+                <img src="{{ url_for('static', filename='images/' + images[0]['image_name']) }}" alt="Recipe Image" class="img-fluid">
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

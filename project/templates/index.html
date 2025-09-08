@@ -1,0 +1,50 @@
+<!-- I used chatgpt in this page -->
+{% extends "layout.html" %}
+
+{% block title %}
+    Recipe Types
+{% endblock %}
+
+{% block main %}
+<div class="container my-5">
+    <!-- Search Bar -->
+    <form method="GET" action="{{ url_for('search_recipes') }}" class="mb-4">
+        <div class="input-group">
+            <input type="text" class="form-control" name="query" placeholder="Search for recipes by title" aria-label="Search" aria-describedby="search-button">
+            <button class="btn btn-primary" type="submit" id="search-button">Search</button>
+        </div>
+    </form>
+
+    <div class="row row-cols-1 row-cols-md-4 g-4">
+        {% for recipe_type in recipe_types %}
+        <div class="col">
+            <!-- Wrap the card in an anchor tag -->
+            <a href="{{ url_for('recipe_type', recipe_type_id=recipe_type.recipe_type_id) }}" class="text-decoration-none">
+                <div class="card h-100">
+                    {% if recipe_type.image_name %}
+                    <img src="{{ url_for('static', filename='images/' + recipe_type.image_name) }}" class="card-img-top" alt="{{ recipe_type.type_name }}">
+                    {% else %}
+                    <img src="https://via.placeholder.com/150" class="card-img-top" alt="No Image Available">
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ recipe_type.type_name }}</h5>
+                    </div>
+                </div>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- You are logged in message -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                alert("{{ messages[0] }}");
+            {% endif %}
+        {% endwith %}
+    });
+</script>
+
+{% endblock %}

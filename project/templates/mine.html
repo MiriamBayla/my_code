@@ -1,0 +1,32 @@
+<!-- In this page I used some chatgpt help -->
+{% extends "layout.html" %}
+
+{% block title %}
+    Index
+{% endblock %}
+
+{% block main %}
+<div class="container my-5">
+    <div class="row row-cols-1 row-cols-md-4 g-4">
+        {% for recipe in recipes %}
+        <div class="col">
+            <!-- Wrap the entire card in an anchor tag -->
+            <a href="{{ url_for('recipe', recipe_id=recipe.recipe_id) }}" class="text-decoration-none">
+                <div class="card h-100">
+                    {% if recipe.image_name %}
+                    <!-- Path to reflect images stored in static/images -->
+                    <img src="{{ url_for('static', filename='images/' + recipe.image_name) }}" class="card-img-top" alt="{{ recipe.title }}">
+                    {% else %}
+                    <img src="https://via.placeholder.com/150" class="card-img-top" alt="No Image Available">
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ recipe.title }}</h5>
+                        <p class="card-text">{{ recipe.description }}</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Search</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .search-container {
+            text-align: center;
+            margin-top: -100px; /* Vertical position */
+        }
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        input[type="text"] {
+            border-radius: 24px;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="top-right-links">
+        <a href="index.html">Back To Google Search</a>
+    </div>
+    <div class="search-container">
+        <form action="https://www.google.com/search" method="get">
+            <input type="text" name="q" placeholder="Search Google Images">
+            <input type="hidden" name="tbm" value="isch">
+            <div class="buttons">
+                <input type="submit" value="Google Search">
+            </div>
+        </form>
+    </div>
+</body>
+</html>

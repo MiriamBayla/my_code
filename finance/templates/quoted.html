@@ -1,0 +1,9 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Current Price
+{% endblock %}
+
+{% block main %}
+<p>The current price of {{ stock['symbol'] }} is {{ "%.2f" | format(stock['price']) }}</p>
+{% endblock %}

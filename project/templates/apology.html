@@ -1,0 +1,13 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Apology
+{% endblock %}
+
+{% block main %}
+
+    <div class="image-container">
+        <img alt="{{ top }}" class="border" src="{{ url_for('static', filename='images/smashed_cake.jpg') }}" title="{{ top }}" style="width: 55%; height: 55%;">
+    <div class="overlay-text">{{ bottom }}</div>
+    </div>
+    {% endblock %}

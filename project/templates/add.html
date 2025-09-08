@@ -1,0 +1,234 @@
+<!-- In this page I used some chatgpt help -->
+{% extends "layout.html" %}
+
+{% block title %}
+    Add Recipe
+{% endblock %}
+
+{% block main %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h2 class="card-title text-center mb-4">Add Recipe</h2>
+
+                    <form method="post" action="/add" id="recipe-form" enctype="multipart/form-data">
+                        <!-- Recipe Title -->
+                        <div class="form-group">
+                            <label for="recipe-title">Recipe Title</label>
+                            <input type="text" class="form-control" id="recipe-title" name="recipe_title" value="{{ recipe_title or '' }}" required title="Enter the title of the recipe">
+                            <div class="invalid-feedback">Please enter a title for your recipe.</div>
+                        </div>
+
+                        <!-- Description -->
+                        <div class="form-group">
+                            <label for="description">Description</label>
+                            <textarea class="form-control" id="description" name="description" rows="3" maxlength="80" required title="Enter a brief description of the recipe (max 80 characters)">{{ description or '' }}</textarea>
+                            <div class="invalid-feedback">Please provide a brief description (max 80 characters).</div>
+                        </div>
+
+                        <!-- Recipe Type -->
+                        <div class="form-group">
+                            <label for="recipe-type">Recipe Type</label>
+                            <select class="form-control" id="recipe-type" name="recipe_type" required title="Select the type of recipe">
+                                <option value="" disabled selected>Type</option>
+                                <option value="Appetizers">Appetizers</option>
+                                <option value="Breads">Breads</option>
+                                <option value="Desserts">Desserts</option>
+                                <option value="Fish">Fish</option>
+                                <option value="Mains">Mains</option>
+                                <option value="Salads">Salads</option>
+                                <option value="Soups">Soups</option>
+                            </select>
+                            <div class="invalid-feedback">Please select a recipe type.</div>
+                        </div>
+
+                        <!-- Ingredients -->
+                        <div class="form-group">
+                            <label>Ingredients</label>
+                            <div id="ingredients-container">
+                                {% for i in range(ingredient_count|default(1)) %}
+                                <div class="ingredient-group row mb-2">
+                                    <div class="col-sm-4">
+                                        <input type="text" class="form-control" placeholder="Name" name="ingredient_name[]" value="{{ ingredient_names[i] if i < ingredient_names|length else '' }}" required title="Enter the name of the ingredient">
+                                        <div class="invalid-feedback">Please enter the ingredient name.</div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <input type="text" class="form-control" placeholder="Amount" name="ingredient_amount[]" pattern="^[0-9]*[.]?[0-9]+$" value="{{ ingredient_amounts[i] if i < ingredient_amounts|length else '' }}" required title="Enter the amount of the ingredient (e.g., 1.5)">
+                                        <div class="invalid-feedback">Please enter a valid amount (e.g., 1.5).</div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <input type="text" class="form-control" placeholder="Measurement" name="ingredient_measurement[]" title="Enter the measurement (e.g., cups, grams)">
+                                        <div class="invalid-feedback">Please enter the measurement (e.g., cups, grams).</div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            <button type="button" class="btn btn-outline-primary btn-sm mt-2" id="add-ingredient"><i class="fas fa-plus"></i> Add Ingredient</button>
+                        </div>
+
+                        <!-- Directions -->
+                        <div class="form-group">
+                            <label>Directions</label>
+                            <div id="directions-container">
+                                {% for i in range(direction_count|default(1)) %}
+                                <div class="direction-group row mb-2">
+                                    <div class="col-sm-12">
+                                        <textarea class="form-control" placeholder="Direction" name="direction[]" rows="3" title="Enter the directions for the recipe">{{ directions[i] if i < directions|length else '' }}</textarea>
+                                        <div class="invalid-feedback">Please provide the direction.</div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            <button type="button" class="btn btn-outline-primary btn-sm mt-2" id="add-direction"><i class="fas fa-plus"></i> Add Direction</button>
+                        </div>
+
+                        <!-- Image Upload -->
+                        <div class="form-group">
+                            <label for="image-upload" class="mt-3">Add Image</label>
+                            <input type="file" class="form-control-file" id="image-upload" name="image" accept="image/*">
+                            <img id="image-preview" src="#" alt="Image Preview" style="display:none; margin-top: 15px; max-width: 100%; height: auto; border: 1px solid #ddd; padding: 5px;">
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="text-center mt-4">
+                            <button type="submit" class="btn btn-success">Submit Recipe</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Focus on the Recipe Title input field when the page loads
+        document.getElementById('recipe-title').focus();
+
+        // Add event listeners for dynamically added ingredients and directions
+        document.getElementById('add-ingredient').addEventListener('click', function() {
+            addIngredientFields();
+        });
+
+        document.getElementById('add-direction').addEventListener('click', function() {
+            addDirectionField();
+        });
+
+        // Handle Enter key in the ingredients and directions sections
+        document.getElementById('recipe-form').addEventListener('keydown', function(event) {
+            if (event.key === 'Enter') {
+                const activeElement = document.activeElement;
+
+                // Handle ingredients section
+                if (activeElement.matches('input[name="ingredient_name[]"], input[name="ingredient_amount[]"], input[name="ingredient_measurement[]"]')) {
+                    event.preventDefault();
+                    const inputs = Array.from(document.querySelectorAll('input[name="ingredient_name[]"], input[name="ingredient_amount[]"], input[name="ingredient_measurement[]"]'));
+                    const currentIndex = inputs.indexOf(activeElement);
+
+                    if (currentIndex >= 0 && currentIndex < inputs.length - 1) {
+                        inputs[currentIndex + 1].focus();
+                    } else {
+                        addIngredientFields();
+                    }
+                }
+
+                // Handle directions section
+                else if (activeElement.matches('textarea[name="direction[]"]')) {
+                    event.preventDefault();
+                    addDirectionField();
+                }
+            }
+        });
+
+        // Function to add new ingredient fields
+        function addIngredientFields() {
+            var container = document.getElementById('ingredients-container');
+            var newElement = document.createElement('div');
+            newElement.className = 'ingredient-group row mb-2';
+            newElement.innerHTML = `
+                <div class="col-sm-4">
+                    <input type="text" class="form-control" placeholder="Name" name="ingredient_name[]" required title="Enter the name of the ingredient">
+                    <div class="invalid-feedback">Please enter the ingredient name.</div>
+                </div>
+                <div class="col-sm-4">
+                    <input type="text" class="form-control" placeholder="Amount" name="ingredient_amount[]" pattern="^[0-9]*[.]?[0-9]+$" required title="Enter the amount of the ingredient (e.g., 1.5)">
+                    <div class="invalid-feedback">Please enter a valid amount (e.g., 1.5).</div>
+                </div>
+                <div class="col-sm-4">
+                    <input type="text" class="form-control" placeholder="Measurement" name="ingredient_measurement[]" title="Enter the measurement (e.g., cups, grams)">
+                    <div class="invalid-feedback">Please enter the measurement (e.g., cups, grams).</div>
+                </div>
+            `;
+            container.appendChild(newElement);
+            newElement.querySelector('input[name="ingredient_name[]"]').focus();
+        }
+
+        // Function to add a new direction field
+        function addDirectionField() {
+            var container = document.getElementById('directions-container');
+            var newElement = document.createElement('div');
+            newElement.className = 'direction-group row mb-2';
+            newElement.innerHTML = `
+                <div class="col-sm-12">
+                    <textarea class="form-control" placeholder="Direction" name="direction[]" rows="3" required title="Enter the directions for the recipe"></textarea>
+                    <div class="invalid-feedback">Please provide the direction.</div>
+                </div>
+            `;
+            container.appendChild(newElement);
+            newElement.querySelector('textarea').focus();
+        }
+
+    // Image preview functionality
+    document.getElementById('image-upload').addEventListener('change', function(event) {
+        var reader = new FileReader();
+        reader.onload = function() {
+            var img = document.getElementById('image-preview');
+            img.src = reader.result;
+            img.style.display = 'block';
+        };
+        reader.readAsDataURL(event.target.files[0]);
+    });
+
+    // Custom validation messages
+    document.querySelectorAll('input, textarea, select').forEach(function(element) {
+        element.addEventListener('invalid', function(event) {
+            event.preventDefault();
+            if (!element.validity.valid) {
+                switch (element.name) {
+                    case 'recipe_title':
+                        element.setCustomValidity('Please enter a title for your recipe.');
+                        break;
+                    case 'description':
+                        element.setCustomValidity('Please provide a brief description (max 80 characters).');
+                        break;
+                    case 'recipe_type':
+                        element.setCustomValidity('Please select a recipe type.');
+                        break;
+                    case 'ingredient_name[]':
+                        element.setCustomValidity('Please enter the ingredient name.');
+                        break;
+                    case 'ingredient_amount[]':
+                        element.setCustomValidity('Please enter a valid amount (e.g., 1.5).');
+                        break;
+                    case 'ingredient_measurement[]':
+                        element.setCustomValidity('Please enter the measurement (e.g., cups, grams).');
+                        break;
+                    case 'direction[]':
+                        element.setCustomValidity('Please provide the direction.');
+                        break;
+                    default:
+                        element.setCustomValidity('');
+                }
+            }
+        });
+
+        element.addEventListener('input', function() {
+            element.setCustomValidity('');
+        });
+    });
+});
+
+</script>
+{% endblock %}

@@ -1,0 +1,21 @@
+I think the two most prominent moods of this person would be:
+*Happy
+*Peacefully excited
+Explaination: I programmed the average amount of energy, valence and danceability in all 100 songs
+                and got the number 0.6199 - this number would indicate a person who doesn't get too
+                stirred up or excited about things and isn't very moody.
+                As well as this, it would indicate someone who isn't deppressed and enjoys day-to-day life.
+
+Why this calculation might not be representative of the listener: In my current calculation I gave equal weight to
+                the energy, valence and danceability of the songs, but this way of averaving might be ommiting
+                important information.
+                For ex: Someone can have a high score of danceable and enerjetic songs but a low score of songs with valence.
+                        Instead of indicating happiness this might indicate escaping a difficult reality by
+                        moving and energizing.
+
+Might be a better way to calculate: Give a specific percentage of weight to each factor rather than taking a pure average
+                                    of them all so that we can get a possibly clearer indicator. Another solution could be
+                                    to add a factor determining differences between various combinations of percentages,
+                                    for ex: Indicating that a high level of danceability together with a low one of valence
+                                    and energy indicates depressed and anxious moods, while high dancibility together with high
+                                    valence would indicate a really happy person.

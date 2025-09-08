@@ -1,0 +1,265 @@
+<!-- In this page I used some chatgpt help -->
+{% extends "layout.html" %}
+
+{% block title %}
+    Edit Recipe
+{% endblock %}
+
+{% block main %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h2 class="card-title text-center mb-4">Edit Recipe Details</h2>
+
+                    <form method="post" action="{{ url_for('edit', recipe_id=recipe.recipe_id) }}" id="recipe-form" enctype="multipart/form-data">
+                        <!-- Recipe Title -->
+                        <div class="form-group">
+                            <label for="recipe-title">Recipe Title</label>
+                            <input type="text" class="form-control" id="recipe-title" name="recipe_title" value="{{ recipe.title }}" title="Enter recipe title" required>
+                        </div>
+
+                        <!-- Description -->
+                        <div class="form-group">
+                            <label for="description">Description</label>
+                            <textarea class="form-control" id="description" name="description" rows="3" maxlength="80" title="Enter description of recipe - up to 80 characters" required>{{ recipe.description }} </textarea>
+                        </div>
+
+                        <!-- Recipe Type -->
+                        <div class="form-group">
+                            <label for="recipe-type">Recipe Type</label>
+                            <select class="form-control" id="recipe-type" name="recipe_type" title="Category of recipe" required>
+                                <option value="" disabled selected>Type</option>
+                                <option value="1" {% if recipe.recipe_type_id == 1 %}selected{% endif %}>Salads</option>
+                                <option value="2" {% if recipe.recipe_type_id == 2 %}selected{% endif %}>Breads</option>
+                                <option value="3" {% if recipe.recipe_type_id == 3 %}selected{% endif %}>Soups</option>
+                                <option value="4" {% if recipe.recipe_type_id == 4 %}selected{% endif %}>Desserts</option>
+                                <option value="5" {% if recipe.recipe_type_id == 5 %}selected{% endif %}>Mains</option>
+                                <option value="6" {% if recipe.recipe_type_id == 6 %}selected{% endif %}>Appetizers</option>
+                                <option value="7" {% if recipe.recipe_type_id == 7 %}selected{% endif %}>Fish</option>
+                            </select>
+                        </div>
+
+                        <!-- Ingredients -->
+                        <div class="form-group">
+                            <label>Ingredients</label>
+                            <div id="ingredients-container">
+                                {% for ingredient in ingredients %}
+                                <div class="ingredient-group row mb-2">
+                                    <div class="col-sm-4">
+                                        <input type="text" class="form-control" placeholder="Name" name="ingredient_name[]" value="{{ ingredient.name }}" required title = "name of ingredient" required>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <input type="text" class="form-control" placeholder="Amount" name="ingredient_amount[]" pattern="^[0-9]*[.]?[0-9]+$" value="{{ ingredient.amount }}" title = "amount of ingredient" required>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <input type="text" class="form-control" placeholder="Measurement" name="ingredient_measurement[]" value="{{ ingredient.measurement }}" title="measurement type" >
+                                    </div>
+                                    <div class="col-sm-12 mt-2">
+                                        <button type="button" class="btn btn-sm mt-2 delete-item" style="background-color: #FFFFC5; color: black; border: 1px solid #ccc;">Delete</button>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            <button type="button" class="btn btn-outline-primary btn-sm mt-2" id="add-ingredient"><i class="fas fa-plus"></i> Add Ingredient</button>
+                        </div>
+
+                        <!-- Directions -->
+                        <div class="form-group">
+                            <label>Directions</label>
+                            <div id="directions-container">
+                                {% for direction in directions %}
+                                <div class="direction-group row mb-2">
+                                    <div class="col-sm-12">
+                                        <textarea class="form-control" placeholder="Direction" name="direction[]" rows="3">{{ direction.direction }}</textarea>
+                                    </div>
+                                    <div class="col-sm-12 mt-2">
+                                        <button type="button" class="btn btn-sm mt-2 delete-item" style="background-color: #FFFFC5; color: black; border: 1px solid #ccc;">Delete</button>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            <button type="button" class="btn btn-outline-primary btn-sm mt-2" id="add-direction"><i class="fas fa-plus"></i> Add Direction</button>
+                        </div>
+
+                        <!-- Image Upload -->
+                        <div class="form-group">
+                            <label for="image-upload" class="mt-3">Add Image</label>
+                            <input type="file" class="form-control-file" id="image-upload" name="image" accept="image/*">
+
+                            {% if image and image.image_name %}
+                                <img id="image-preview" src="{{ url_for('static', filename='images/' + image.image_name) }}" alt="Image Preview" style="display:block; margin-top: 15px; max-width: 100%; height: auto; border: 1px solid #ddd; padding: 5px;">
+                            {% else %}
+                                <img id="image-preview" src="#" alt="No Image Available" style="display:none; margin-top: 15px; max-width: 100%; height: auto; border: 1px solid #ddd; padding: 5px;">
+                            {% endif %}
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="text-center mt-4">
+                            <button type="submit" class="btn btn-success">Update Recipe</button>
+                        </div>
+
+                        <!-- Delete Recipe Button -->
+                        <div class="text-center mt-4">
+                            <button type="button" class="btn btn-danger" id="delete-recipe">Delete Recipe</button>
+                        </div>
+
+                        <!-- Delete Recipe Modal -->
+                        <div id="deleteRecipeModal" style="display:none;">
+                            <div style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); display:flex; justify-content:center; align-items:center;">
+                                <div style="background:white; padding:20px; border-radius:5px; text-align:center;">
+                                    <h5>Delete Recipe?</h5>
+                                    <p>Are you sure you want to delete this recipe?</p>
+                                    <button type="button" id="confirm-delete" class="btn btn-danger">Delete</button>
+                                    <button type="button" id="cancel-delete" class="btn btn-secondary">Cancel</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Hidden Recipe ID -->
+                        <input type="hidden" id="recipe-id" value="{{ recipe.recipe_id }}">
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add ingredient event listener
+        document.getElementById('add-ingredient').addEventListener('click', function() {
+            var container = document.getElementById('ingredients-container');
+            var newElement = document.createElement('div');
+            newElement.className = 'ingredient-group row mb-2';
+            newElement.innerHTML = `
+                <div class="col-sm-4">
+                    <input type="text" class="form-control" placeholder="Name" name="ingredient_name[]">
+                </div>
+                <div class="col-sm-4">
+                    <input type="text" class="form-control" placeholder="Amount" name="ingredient_amount[]" pattern="^[0-9]*[.]?[0-9]+$" required>
+                </div>
+                <div class="col-sm-4">
+                    <input type="text" class="form-control" placeholder="Measurement" name="ingredient_measurement[]">
+                </div>
+                <div class="col-sm-12 mt-2">
+                    <button type="button" class="btn btn-sm delete-item" style="background-color: #FFFFC5; color: black; border: 1px solid #ccc;">Delete</button>
+                </div>
+            `;
+            container.appendChild(newElement);
+            newElement.querySelector('input[name="ingredient_name[]"]').focus();  // Focus on the "Name" input field
+        });
+
+        // Add direction event listener
+        document.getElementById('add-direction').addEventListener('click', function() {
+            var container = document.getElementById('directions-container');
+            var newElement = document.createElement('div');
+            newElement.className = 'direction-group row mb-2';
+            newElement.innerHTML = `
+                <div class="col-sm-12">
+                    <textarea class="form-control" placeholder="Direction" name="direction[]"></textarea>
+                </div>
+                <div class="col-sm-12 mt-2">
+                    <button type="button" class="btn btn-sm delete-item" style="background-color: #FFFFC5; color: black; border: 1px solid #ccc;">Delete</button>
+                </div>
+            `;
+            container.appendChild(newElement);
+            newElement.querySelector('textarea').focus();  // Focus on the new textarea
+        });
+
+        // Event delegation for dynamically added elements
+        document.addEventListener('click', function(event) {
+            if (event.target.classList.contains('delete-item')) {
+                event.target.closest('.ingredient-group, .direction-group').remove();
+            }
+        });
+
+        // Image upload preview
+        document.getElementById('image-upload').addEventListener('change', function(event) {
+            var reader = new FileReader();
+            reader.onload = function() {
+                var img = document.getElementById('image-preview');
+                img.src = reader.result;
+                img.style.display = 'block';
+            };
+            reader.readAsDataURL(event.target.files[0]);
+        });
+
+        // Delete recipe modal functionality
+        document.getElementById('delete-recipe').addEventListener('click', function() {
+            var modal = document.getElementById('deleteRecipeModal');
+            if (modal) {
+                modal.style.display = 'flex';
+            }
+        });
+
+        document.getElementById('cancel-delete').addEventListener('click', function() {
+            var modal = document.getElementById('deleteRecipeModal');
+            if (modal) {
+                modal.style.display = 'none';
+            }
+        });
+
+        document.getElementById('confirm-delete').addEventListener('click', function() {
+            var recipeId = document.getElementById('recipe-id').value;
+
+            fetch(`/delete/${recipeId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ status: 'off' })
+            }).then(response => {
+                if (response.ok) {
+                    window.location.href = '/mine';  // Redirect to the Flask route
+                } else {
+                    alert('An error occurred while deleting the recipe.');
+                }
+            });
+        });
+
+        // Focus on the Recipe Title input field when the page loads
+        document.getElementById('recipe-title').focus();
+
+        // Validation messages
+        document.querySelectorAll('input, textarea, select').forEach(function(element) {
+            element.addEventListener('invalid', function(event) {
+                event.preventDefault();
+                if (!element.validity.valid) {
+                    switch (element.name) {
+                        case 'recipe_title':
+                            element.setCustomValidity('Please enter a title for your recipe.');
+                            break;
+                        case 'description':
+                            element.setCustomValidity('Please provide a brief description (max 80 characters).');
+                            break;
+                        case 'recipe_type':
+                            element.setCustomValidity('Please select a recipe type.');
+                            break;
+                        case 'ingredient_name[]':
+                            element.setCustomValidity('Please enter the ingredient name.');
+                            break;
+                        case 'ingredient_amount[]':
+                            element.setCustomValidity('Please enter a valid amount (e.g., 1.5).');
+                            break;
+                        case 'ingredient_measurement[]':
+                            element.setCustomValidity('Please enter the measurement (e.g., cups, grams).');
+                            break;
+                        case 'direction[]':
+                            element.setCustomValidity('Please provide the direction.');
+                            break;
+                        default:
+                            element.setCustomValidity('');
+                    }
+                }
+            });
+
+            element.addEventListener('input', function() {
+                element.setCustomValidity('');
+            });
+        });
+    });
+</script>
+{% endblock %}

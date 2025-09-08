@@ -1,0 +1,11 @@
+sort1 uses: bubble sort
+
+How do you know?: it was shorter than selection sort when using sorted texts.
+
+sort2 uses: merge sort
+
+How do you know?: it was the shortest one when sorting both sorted and reversed texts.
+
+sort3 uses: selection sort
+
+How do you know?: its time was longest when sorting sorted and reversed texts.

@@ -1,0 +1,14 @@
+10 HTML tags (at least):
+<div><hr><h2><h3><a><link><li>
+<ul><script><p><button>
+
+5 CSS properties (at least):
+text-align, background-color, border, font-size,
+padding, position, bottom, width, left.
+
+How I used JavaScript:
+To change buttons to color red when answers are incorrect, as well as when
+they are correct - change them to green and print "correct!".
+
+How I used Bootstrap:
+To make a colorful list of things about me.

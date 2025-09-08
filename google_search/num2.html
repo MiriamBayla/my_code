@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Search</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .search-container {
+            margin-top: -50px; /* Vertical position */
+            text-align: left;
+        }
+        body {
+            margin-top: +200px; /* Vertical position */
+            padding: 50px;
+            display: flex;
+            flex-direction: column;
+            justify-content: left;
+            align-items: left;
+        }
+        .advanced-search-field {
+            margin-bottom: 15px; /* Add space between each field */
+            display: flex; /* Align children (label and input) in a row */
+            align-items: center; /* Vertically align items */
+        }
+
+        .advanced-search-field label {
+            margin-right: 10px; /* Space between label and input */
+            width: 200px; /* Fixed width for labels */
+        }
+
+        .advanced-search-field input[type="text"] {
+            width: 50%; /* Make inputs full-width of the container */
+            padding: 10px;
+            border: 1px solid #CBC3E3;
+            border-radius: 4px; 
+            box-sizing: border-box; /* Include padding and border in the element's total width and height */
+        }
+
+        input[type="text"] {
+            padding: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="top-right-links">
+        <a href="index.html">Back To Google Search</a>
+    </div>
+    <h4>Find pages with...</h4>
+    <div class="search-container">
+        <form action="https://www.google.com/search" method="get">
+            <div class="advanced-search-field">
+                <label for="all-words">all these words:</label>
+                <input type="text" id="all-words" name="q" placeholder="All these words">
+            </div>
+            <div class="advanced-search-field">
+                <label for="exact-phrase">this exact word or phrase:</label>
+                <input type="text" id="exact-phrase" name="as_q" placeholder="This exact word or phrase">
+            </div>
+            <div class="advanced-search-field">
+                <label for="any-words">any of these words:</label>
+                <input type="text" id="any-words" name="as_epq" placeholder="Any of these words">
+            </div>
+            <div class="advanced-search-field">
+                <label for="none-words">none of these words:</label>
+                <input type="text" id="none-words" name="as_not" placeholder="None of these words">
+            </div>
+            <input type="submit" value="Advanced Search" class="advanced-search-button">
+        </form>
+    </div>
+</body>
+</html>

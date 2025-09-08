@@ -1,0 +1,42 @@
+<!-- In this page I used some chatgpt help -->
+{% extends "layout.html" %}
+
+{% block title %}
+    Edit Recipe
+{% endblock %}
+
+{% block main %}
+<div class="container my-5">
+    <!-- Search Bar -->
+    <form method="GET" action="{{ url_for('search_recipes_edit') }}" class="mb-4">
+        <div class="input-group">
+            <input type="text" class="form-control" name="query" placeholder="Search for recipes by title" aria-label="Search" aria-describedby="search-button">
+            <button class="btn btn-primary" type="submit" id="search-button">Search</button>
+        </div>
+    </form>
+
+    <h2>Click recipe to edit:</h2>
+
+    <div class="row row-cols-1 row-cols-md-4 g-4">
+        {% for recipe in recipes %}
+        <div class="col">
+            <!-- Wrap the entire card in an anchor tag -->
+            <a href="{{ url_for('edit', recipe_id=recipe.recipe_id) }}" class="text-decoration-none">
+                <div class="card h-100">
+                    {% if recipe.image_name %}
+                    <!-- Path to reflect images stored in static/images -->
+                    <img src="{{ url_for('static', filename='images/' + recipe.image_name) }}" class="card-img-top" alt="{{ recipe.title }}">
+                    {% else %}
+                    <img src="https://via.placeholder.com/150" class="card-img-top" alt="No Image Available">
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ recipe.title }}</h5>
+                        <p class="card-text">{{ recipe.description }}</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
