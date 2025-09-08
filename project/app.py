@@ -471,3 +471,8 @@ def recipe_details(recipe_id):
         return render_template('recipe.html', recipe=recipe[0])
     else:
         return "Recipe not found", 404
+
+
+
+if __name__ == "__main__":
+    app.run(debug=True)
