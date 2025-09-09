@@ -52,26 +52,37 @@ Recipe Types
     // Show/hide chat popup when AI button is clicked
     const aiButton = document.getElementById('aiButton');
     const chatPopup = document.getElementById('chatPopup');
+    const chatMessages = document.getElementById('chatMessages');
 
     aiButton.addEventListener('click', () => {
         chatPopup.style.display = chatPopup.style.display === 'block' ? 'none' : 'block';
+
+        // Reset chat if popup is opened again
+        if (chatPopup.style.display === 'block') {
+            chatMessages.innerHTML = '';
+            document.getElementById('userInput').value = '';
+            document.getElementById('userInput').style.display = 'block';
+            document.getElementById('sendBtn').style.display = 'inline-block';
+            chatPopup.style.height = 'auto'; // let it grow naturally
+        }
     });
 
     // Send message function
     function sendMessage() {
-        const userInput = document.getElementById('userInput').value.trim();
-        const chatMessages = document.getElementById('chatMessages');
+        const rawInput = document.getElementById('userInput').value.trim();
+        if (!rawInput) return; // do nothing if input is empty
 
-        if (!userInput) return; // do nothing if input is empty
+        // Convert ingredients to comma-separated
+        const ingredients = rawInput.split(/\s*,\s*|\n/).filter(Boolean).join(', ');
 
         // Display user message
         const userMsg = document.createElement('div');
-        userMsg.textContent = `You: ${userInput}`;
+        userMsg.textContent = `You: ${ingredients}`;
         chatMessages.appendChild(userMsg);
 
-        // Display AI response (replace with real API call if needed)
+        // Display AI response
         const aiMsg = document.createElement('div');
-        aiMsg.innerHTML = `AI: Here’s a recipe suggestion for your ingredients.`;
+        aiMsg.innerHTML = `AI: Here’s a recipe suggestion for your ingredients: ${ingredients}.`;
         chatMessages.appendChild(aiMsg);
 
         // Hide input and send button
@@ -79,16 +90,20 @@ Recipe Types
         document.getElementById('sendBtn').style.display = 'none';
 
         // Add "View Recipe" button below AI response
-        const viewBtn = document.createElement('button');
+        const viewBtn = document.createElement('a');
         viewBtn.textContent = 'View Recipe';
         viewBtn.className = 'chat-ai-button';
-        viewBtn.onclick = () => {
-            alert("Redirect to full recipe page here!");
-        };
-        chatMessages.appendChild(viewBtn);
+        viewBtn.href = '{{ url_for("AI_recipe") }}'; // Redirect to AI_recipe.html route
+        chatPopup.appendChild(viewBtn);
 
-        // Adjust popup height to fit content and avoid empty space
-        chatPopup.style.height = chatMessages.scrollHeight + 20 + 'px';
+        // Adjust popup height
+        const minHeight = 200; // minimum popup height for short messages
+        const maxHeight = 600; // maximum popup height
+        chatPopup.style.height = Math.min(Math.max(chatMessages.scrollHeight + 60, minHeight), maxHeight) + 'px';
+
+        // Allow scrolling inside chatMessages
+        chatMessages.style.maxHeight = (chatPopup.offsetHeight - 80) + 'px';
+        chatMessages.style.overflowY = 'auto';
 
         // Scroll to bottom of messages
         chatMessages.scrollTop = chatMessages.scrollHeight;
