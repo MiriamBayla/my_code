@@ -45,63 +45,6 @@
     </div>
 </div>
 
-<!-- AI Button Styles -->
-<style>
-    #aiButton {
-        position: fixed;
-        top: 150px;
-        left: 20px;
-        background: linear-gradient(45deg, #3a0ae7, #f752c5);
-        color: white;
-        border: none;
-        border-radius: 50px;
-        padding: 12px 20px;
-        font-size: 16px;
-        cursor: pointer;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-        z-index: 1000;
-    }
-
-    #chatPopup {
-        display: none;
-        position: fixed;
-        top: 210px;
-        left: 20px;
-        width: 300px;
-        max-height: 600px;
-        background: white;
-        border: 1px solid #ccc;
-        border-radius: 10px;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-        z-index: 1000;
-        padding: 10px;
-        overflow-y: auto;
-    }
-
-    #chatPopup h4 {
-        margin-top: 0;
-    }
-
-    #chatPopup textarea {
-        width: 100%;
-        height: 60px;
-        margin-bottom: 10px;
-    }
-
-    #chatPopup button {
-        background: #08d108;
-        color: white;
-        border: none;
-        padding: 8px 12px;
-        cursor: pointer;
-        border-radius: 5px;
-    }
-
-    #chatPopup button:hover {
-        background: #f00fca;
-    }
-</style>
-
 <!-- AI Button Script -->
 <script>
     const aiButton = document.getElementById('aiButton');
@@ -123,7 +66,6 @@
             .map(item => item.trim())
             .filter(item => item.length > 0);
 
-        // Join with a single comma and space
         const formattedIngredients = ingredients.join(', ');
 
         // User message
@@ -131,9 +73,15 @@
         userMsg.textContent = "You: " + formattedIngredients;
         messages.appendChild(userMsg);
 
-        // AI message
+        // AI message with purple button linking to AI_recipe.html
         const aiMsg = document.createElement('div');
-        aiMsg.textContent = "AI: Here's a recipe suggestion with " + formattedIngredients;
+        const viewButton = document.createElement('a');
+        viewButton.textContent = "View Suggestion";
+        viewButton.href = "{{ url_for('AI_recipe') }}"; // Flask route to AI_recipe.html
+        viewButton.className = "chat-ai-button"; // use CSS class from styles.css
+
+        aiMsg.textContent = "AI: Here's a recipe suggestion using " + formattedIngredients + " ";
+        aiMsg.appendChild(viewButton);
         messages.appendChild(aiMsg);
 
         input.value = '';
@@ -151,5 +99,4 @@
         {% endwith %}
     });
 </script>
-
 {% endblock %}

@@ -72,6 +72,11 @@ def index():
     ''')
     return render_template('index.html', recipe_types=recipe_types)
 
+# AI recipe page function - I used chatgpt
+@app.route('/AI_recipe')
+def AI_recipe():
+    return render_template('AI_recipe.html')
+
 # Mine page function
 @app.route('/mine')
 @login_required
