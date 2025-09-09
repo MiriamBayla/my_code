@@ -2,18 +2,19 @@
 {% extends "layout.html" %}
 
 {% block title %}
-    Recipe Types
+Recipe Types
 {% endblock %}
 
 {% block main %}
 <!-- Floating AI Recipe Button -->
 <button id="aiButton">Generate AI Recipe</button>
 
+<!-- Chat Popup -->
 <div id="chatPopup">
     <h4>AI Recipe Generator</h4>
     <div id="chatMessages"></div>
     <textarea id="userInput" placeholder="Type ingredients..."></textarea>
-    <button onclick="sendMessage()">Send</button>
+    <button id="sendBtn" onclick="sendMessage()">Send</button>
 </div>
 
 <div class="container my-5">
@@ -25,6 +26,7 @@
         </div>
     </form>
 
+    <!-- Display recipe types -->
     <div class="row row-cols-1 row-cols-md-4 g-4">
         {% for recipe_type in recipe_types %}
         <div class="col">
@@ -45,8 +47,9 @@
     </div>
 </div>
 
-<!-- AI Button Script -->
+<!-- JavaScript for AI Button and Chat -->
 <script>
+    // Show/hide chat popup when AI button is clicked
     const aiButton = document.getElementById('aiButton');
     const chatPopup = document.getElementById('chatPopup');
 
@@ -54,48 +57,49 @@
         chatPopup.style.display = chatPopup.style.display === 'block' ? 'none' : 'block';
     });
 
+    // Send message function
     function sendMessage() {
-        const input = document.getElementById('userInput');
-        const messages = document.getElementById('chatMessages');
+        const userInput = document.getElementById('userInput').value.trim();
+        const chatMessages = document.getElementById('chatMessages');
 
-        if (input.value.trim() === '') return;
+        if (!userInput) return; // do nothing if input is empty
 
-        // Split input by commas or newlines, trim spaces, and remove empty strings
-        const ingredients = input.value
-            .split(/[\n,]+/)
-            .map(item => item.trim())
-            .filter(item => item.length > 0);
-
-        const formattedIngredients = ingredients.join(', ');
-
-        // User message
+        // Display user message
         const userMsg = document.createElement('div');
-        userMsg.textContent = "You: " + formattedIngredients;
-        messages.appendChild(userMsg);
+        userMsg.textContent = `You: ${userInput}`;
+        chatMessages.appendChild(userMsg);
 
-        // AI message with purple button linking to AI_recipe.html
+        // Display AI response (replace with real API call if needed)
         const aiMsg = document.createElement('div');
-        const viewButton = document.createElement('a');
-        viewButton.textContent = "View Suggestion";
-        viewButton.href = "{{ url_for('AI_recipe') }}"; // Flask route to AI_recipe.html
-        viewButton.className = "chat-ai-button"; // use CSS class from styles.css
+        aiMsg.innerHTML = `AI: Here’s a recipe suggestion for your ingredients.`;
+        chatMessages.appendChild(aiMsg);
 
-        aiMsg.textContent = "AI: Here's a recipe suggestion using " + formattedIngredients + " ";
-        aiMsg.appendChild(viewButton);
-        messages.appendChild(aiMsg);
+        // Hide input and send button
+        document.getElementById('userInput').style.display = 'none';
+        document.getElementById('sendBtn').style.display = 'none';
 
-        input.value = '';
-        messages.scrollTop = messages.scrollHeight;
+        // Add "View Recipe" button below AI response
+        const viewBtn = document.createElement('button');
+        viewBtn.textContent = 'View Recipe';
+        viewBtn.className = 'chat-ai-button';
+        viewBtn.onclick = () => {
+            alert("Redirect to full recipe page here!");
+        };
+        chatMessages.appendChild(viewBtn);
+
+        // Adjust popup height to fit content and avoid empty space
+        chatPopup.style.height = chatMessages.scrollHeight + 20 + 'px';
+
+        // Scroll to bottom of messages
+        chatMessages.scrollTop = chatMessages.scrollHeight;
     }
-</script>
 
-<!-- Existing "You are logged in" message -->
-<script>
+    // Existing "You are logged in" message
     document.addEventListener('DOMContentLoaded', function() {
         {% with messages = get_flashed_messages() %}
-            {% if messages %}
-                alert("{{ messages[0] }}");
-            {% endif %}
+        {% if messages %}
+        alert("{{ messages[0] }}");
+        {% endif %}
         {% endwith %}
     });
 </script>
