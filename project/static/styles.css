@@ -69,3 +69,77 @@
 #deleteRecipeModal .modal-footer {
     border-top: none;
 }
+
+/* Floating AI Button */
+#aiButton {
+    position: fixed;
+    top: 150px;
+    left: 20px;
+    background: linear-gradient(45deg, #3a0ae7, #f752c5);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    padding: 12px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    z-index: 1000;
+}
+
+/* Chat Popup */
+#chatPopup {
+    display: none;
+    position: fixed;
+    top: 210px;
+    left: 20px;
+    width: 300px;
+    max-height: 600px;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    z-index: 1000;
+    padding: 10px;
+    overflow-y: auto; /* allows scrolling */
+}
+
+#chatMessages {
+    max-height: 400px; /* limit messages height */
+    overflow-y: auto;  /* scrollable with mouse */
+    margin-bottom: 10px;
+}
+
+#chatPopup h4 {
+    margin-top: 0;
+}
+
+#chatPopup textarea {
+    width: 100%;
+    height: 60px;
+    margin-bottom: 10px;
+}
+
+#chatPopup button {
+    background: #08d108;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+#chatPopup button:hover {
+    background: #f00fca;
+}
+
+/* AI "View Suggestion" button inside chat */
+.chat-ai-button {
+    display: inline-block;
+    padding: 8px 12px;
+    margin-top: 5px;
+    background-color: #8a2be2; /* bright purple */
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+}
