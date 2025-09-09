@@ -117,12 +117,23 @@
 
         if (input.value.trim() === '') return;
 
+        // Split input by commas or newlines, trim spaces, and remove empty strings
+        const ingredients = input.value
+            .split(/[\n,]+/)
+            .map(item => item.trim())
+            .filter(item => item.length > 0);
+
+        // Join with a single comma and space
+        const formattedIngredients = ingredients.join(', ');
+
+        // User message
         const userMsg = document.createElement('div');
-        userMsg.textContent = "You: " + input.value;
+        userMsg.textContent = "You: " + formattedIngredients;
         messages.appendChild(userMsg);
 
+        // AI message
         const aiMsg = document.createElement('div');
-        aiMsg.textContent = "AI: Here's a recipe suggestion with " + input.value;
+        aiMsg.textContent = "AI: Here's a recipe suggestion with " + formattedIngredients;
         messages.appendChild(aiMsg);
 
         input.value = '';
