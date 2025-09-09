@@ -6,6 +6,16 @@
 {% endblock %}
 
 {% block main %}
+<!-- Floating AI Recipe Button -->
+<button id="aiButton">Generate AI Recipe</button>
+
+<div id="chatPopup">
+    <h4>AI Recipe Generator</h4>
+    <div id="chatMessages"></div>
+    <textarea id="userInput" placeholder="Type an ingredient..."></textarea>
+    <button onclick="sendMessage()">Send</button>
+</div>
+
 <div class="container my-5">
     <!-- Search Bar -->
     <form method="GET" action="{{ url_for('search_recipes') }}" class="mb-4">
@@ -18,7 +28,6 @@
     <div class="row row-cols-1 row-cols-md-4 g-4">
         {% for recipe_type in recipe_types %}
         <div class="col">
-            <!-- Wrap the card in an anchor tag -->
             <a href="{{ url_for('recipe_type', recipe_type_id=recipe_type.recipe_type_id) }}" class="text-decoration-none">
                 <div class="card h-100">
                     {% if recipe_type.image_name %}
@@ -36,7 +45,92 @@
     </div>
 </div>
 
-<!-- You are logged in message -->
+<!-- AI Button Styles -->
+<style>
+    #aiButton {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        background: linear-gradient(45deg, #ff7e5f, #feb47b);
+        color: white;
+        border: none;
+        border-radius: 50px;
+        padding: 12px 20px;
+        font-size: 16px;
+        cursor: pointer;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        z-index: 1000;
+    }
+
+    #chatPopup {
+        display: none;
+        position: fixed;
+        top: 70px;
+        left: 20px;
+        width: 300px;
+        max-height: 400px;
+        background: white;
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        z-index: 1000;
+        padding: 10px;
+        overflow-y: auto;
+    }
+
+    #chatPopup h4 {
+        margin-top: 0;
+    }
+
+    #chatPopup textarea {
+        width: 100%;
+        height: 60px;
+        margin-bottom: 10px;
+    }
+
+    #chatPopup button {
+        background: #ff7e5f;
+        color: white;
+        border: none;
+        padding: 8px 12px;
+        cursor: pointer;
+        border-radius: 5px;
+    }
+
+    #chatPopup button:hover {
+        background: #feb47b;
+    }
+</style>
+
+<!-- AI Button Script -->
+<script>
+    const aiButton = document.getElementById('aiButton');
+    const chatPopup = document.getElementById('chatPopup');
+
+    aiButton.addEventListener('click', () => {
+        chatPopup.style.display = chatPopup.style.display === 'block' ? 'none' : 'block';
+    });
+
+    function sendMessage() {
+        const input = document.getElementById('userInput');
+        const messages = document.getElementById('chatMessages');
+
+        if (input.value.trim() === '') return;
+
+        const userMsg = document.createElement('div');
+        userMsg.textContent = "You: " + input.value;
+        messages.appendChild(userMsg);
+
+        const aiMsg = document.createElement('div');
+        aiMsg.textContent = "AI: Here's a recipe suggestion with " + input.value;
+        messages.appendChild(aiMsg);
+
+        input.value = '';
+        messages.scrollTop = messages.scrollHeight;
+    }
+</script>
+
+<!-- Existing "You are logged in" message -->
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         {% with messages = get_flashed_messages() %}
